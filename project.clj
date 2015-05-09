@@ -7,6 +7,7 @@
   :source-paths ["src/clj", "src/cljs"]
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [compojure "1.1.6"]
+                 [domina "1.0.3"]
                  [org.clojure/clojurescript "0.0-2069"]
                  ;;[org.clojure/clojurescript "0.0-3211"]
                  ]
