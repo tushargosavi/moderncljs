@@ -15,14 +15,28 @@
   :plugins [[lein-cljsbuild "1.0.0"]
             [lein-ring "0.9.3"]]
   
-  :cljsbuild {
-              :builds
-              [{
-                :source-paths ["src/cljs"]
+  :cljsbuild {:builds
+              {:dev
+               {
+                :source-paths ["src/brepl" "src/cljs"]
                 :compiler {
                            :output-to "resources/public/js/modern.js"
                            :optimizations :whitespace
                            :pretty-print true
-                           }}]}
+                           }}
+
+               :prod
+               {;; clojurescript source code path
+                :source-paths ["src/cljs"]
+
+                ;; Google Closure Compiler options
+                :compiler {;; the name of emitted JS script file
+                           :output-to "resources/public/js/modern_prod.js"
+
+                           ;; advanced optimization
+                           :optimizations :advanced
+
+                           ;; no need prettyfication
+                           :pretty-print false}}}}
 
  :ring {:handler modern-cljs.core/handler})
