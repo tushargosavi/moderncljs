@@ -6,10 +6,13 @@
   
   :source-paths ["src/clj", "src/cljs"]
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 ;;[org.clojure/clojurescript "0.0-2069"]]
-                 [org.clojure/clojurescript "0.0-3211"]]
+                 [compojure "1.1.6"]
+                 ;;[org.clojure/clojurescript "0.0-2069"]
+                 [org.clojure/clojurescript "0.0-3211"]
+                 ]
   
-  :plugins [[lein-cljsbuild "1.0.5"]]
+  :plugins [[lein-cljsbuild "1.0.5"]
+            [lein-ring "0.9.3"]]
   
   :cljsbuild {
               :builds
@@ -19,4 +22,6 @@
                            :output-to "resources/public/js/modern.js"
                            :optimizations :whitespace
                            :pretty-print true
-                           }}]})
+                           }}]}
+
+ :ring {:handler modern-cljs.core/handler})
