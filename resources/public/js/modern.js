@@ -28826,7 +28826,6 @@ modern_cljs.shopping.init = function init() {
     return null
   }
 };
-window.onload = modern_cljs.shopping.init;
 goog.provide("goog.structs.Collection");
 goog.structs.Collection = function() {
 };
@@ -31967,7 +31966,6 @@ modern_cljs.login.init = function init() {
     return null
   }
 };
-window.onload = modern_cljs.login.init;
 goog.provide("goog.net.xpc.FrameElementMethodTransport");
 goog.require("goog.net.xpc");
 goog.require("goog.net.xpc.CrossPageChannelRole");

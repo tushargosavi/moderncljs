@@ -23,4 +23,4 @@
         (set! (.-onsubmit login-form) validate-dbg)
         (.log js/console "init function called")))))
 
-(set! (.-onload js/window) init)
+;;(set! (.-onload js/window) init)
