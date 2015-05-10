@@ -6,9 +6,12 @@
   
   :source-paths ["src/clj", "src/cljs"]
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [compojure "1.1.6"]
+                 [compojure "1.3.4"]
                  [domina "1.0.3"]
                  [hiccups "0.3.0"]
+                 ;;[com.cemerick/shoreleave-remote-ring "0.0.2"]
+                 [org.clojars.magomimmo/shoreleave-remote-ring "0.3.1-SNAPSHOT"]
+                 [org.clojars.magomimmo/shoreleave-remote "0.3.1-SNAPSHOT"]
                  [org.clojure/clojurescript "0.0-2069"]
                  ;;[org.clojure/clojurescript "0.0-3211"]
                  ]
@@ -40,4 +43,4 @@
                            ;; no need prettyfication
                            :pretty-print false}}}}
 
- :ring {:handler modern-cljs.core/handler})
+ :ring {:handler modern-cljs.remotes/app})

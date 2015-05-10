@@ -2,22 +2,34 @@
   (:require-macros [hiccups.core :as h])
   (:require [domina :as dom]
             [domina.events :as ev]
-            [hiccups.runtime]))
+            [hiccups.runtime :as hiccupsrt]
+            [shoreleave.remotes.http-rpc :refer [remote-callback]]
+            [cljs.reader :refer [read-string]]))
 
 
 (defn get-val [id]
-  (dom/value (dom/by-id id)))
+  (read-string (dom/value (dom/by-id id))))
+
+(defn calculate-local [quantity price tax discount]
+  (update-total (-> (* quantity price)
+                    (* (+  1 (/ tax 100)))
+                    (- discount))))
+
+(defn calculate-remote [quantity price tax discount]
+  (remote-callback :calculate
+                   [quantity price tax discount]
+                   #(update-total %)))
+
+(defn update-total [total]
+  (dom/set-value! (dom/by-id "total") (.toFixed total 2)))
 
 (defn calculate []
   (let [quantity (get-val "quantity")
         price (get-val "price")
         tax (get-val "tax")
         discount (get-val "discount")]
-    (dom/set-value! (dom/by-id "total") (-> (* quantity price)
-                                    (* (+  1 (/ tax 100)))
-                                    (- discount)
-                                    (.toFixed 2)))
-    false))
+    (calculate-remote quantity price tax discount)))
+
 
 (defn add-help []
   (dom/append! (dom/by-id "shoppingForm")
