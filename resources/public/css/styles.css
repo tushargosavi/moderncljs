@@ -146,3 +146,7 @@ input[type=radio]:focus + label{ background-position: 0 -80px; }
 input[type=radio] + label:hover{ background-position: 0 -96px; } 
 input[type=radio]:checked + label{ background-position: 0 -112px; }
 */
+
+.help {
+    color:red;
+}

@@ -35042,38 +35042,87 @@ goog.net.xpc.NativeMessagingTransport.parseTransportPayload_ = function(payload)
 };
 goog.provide("modern_cljs.login");
 goog.require("cljs.core");
+goog.require("hiccups.runtime");
+goog.require("domina.events");
+goog.require("domina.events");
 goog.require("domina");
 goog.require("domina");
-modern_cljs.login.validate_form = function validate_form() {
+modern_cljs.login._STAR_password_re_STAR_ = /^(?=.*\d).{4,8}$/;
+modern_cljs.login._STAR_email_re_STAR_ = /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
+modern_cljs.login.get_value = function get_value(name) {
+  return domina.value.call(null, domina.by_id.call(null, name))
+};
+modern_cljs.login.validate_form = function validate_form(e) {
   var email = domina.by_id.call(null, "email");
   var password = domina.by_id.call(null, "password");
-  if(cljs.core.count.call(null, domina.value.call(null, email)) > 0 && cljs.core.count.call(null, domina.value.call(null, password)) > 0) {
-    return true
+  var email_val = domina.value.call(null, email);
+  var password_val = domina.value.call(null, password);
+  if(cljs.core.empty_QMARK_.call(null, email_val) || cljs.core.empty_QMARK_.call(null, password_val)) {
+    domina.destroy_BANG_.call(null, domina.by_class.call(null, "help"));
+    domina.events.prevent_default.call(null, e);
+    return domina.append_BANG_.call(null, domina.by_id.call(null, "loginForm"), [cljs.core.str('\x3cdiv class\x3d"help"\x3ePlease complete the form\x3c/div\x3e')].join(""))
   }else {
-    alert("Please complete the form");
-    return false
+    if(cljs.core.truth_(function() {
+      var and__3273__auto__ = modern_cljs.login.validate_email.call(null, email);
+      if(cljs.core.truth_(and__3273__auto__)) {
+        return modern_cljs.login.validate_password.call(null, password)
+      }else {
+        return and__3273__auto__
+      }
+    }())) {
+      return true
+    }else {
+      return domina.events.prevent_default.call(null, e)
+    }
   }
 };
-modern_cljs.login.validate_dbg = function validate_dbg() {
+modern_cljs.login.validate_dbg = function validate_dbg(e) {
   console.log("validate function called");
-  return modern_cljs.login.validate_form.call(null)
+  return modern_cljs.login.validate_form.call(null, e)
+};
+modern_cljs.login.validate_email = function validate_email(email) {
+  console.log("calling validate email");
+  domina.destroy_BANG_.call(null, domina.by_class.call(null, "email"));
+  if(cljs.core.not.call(null, cljs.core.re_matches.call(null, modern_cljs.login._STAR_email_re_STAR_, domina.value.call(null, email)))) {
+    domina.prepend_BANG_.call(null, domina.by_id.call(null, "loginForm"), [cljs.core.str('\x3cdiv class\x3d"help email"\x3eWrong email\x3c/div\x3e')].join(""));
+    return false
+  }else {
+    return true
+  }
+};
+modern_cljs.login.validate_password = function validate_password(passwd) {
+  console.log("calling validate password");
+  domina.destroy_BANG_.call(null, domina.by_class.call(null, "password"));
+  if(cljs.core.not.call(null, cljs.core.re_matches.call(null, modern_cljs.login._STAR_password_re_STAR_, domina.value.call(null, passwd)))) {
+    domina.prepend_BANG_.call(null, domina.by_id.call(null, "loginForm"), [cljs.core.str('\x3cdiv class\x3d"help password"\x3eWrong password\x3c/div\x3e')].join(""));
+    return false
+  }else {
+    return true
+  }
 };
 modern_cljs.login.init = function init() {
   if(cljs.core.truth_(function() {
     var and__3273__auto__ = document;
     if(cljs.core.truth_(and__3273__auto__)) {
-      return document.getElementById
+      return document["getElementById"]
     }else {
       return and__3273__auto__
     }
   }())) {
-    var login_form = document.getElementById("loginForm");
-    login_form.onsubmit = modern_cljs.login.validate_dbg;
-    return console.log("init function called")
+    var email = domina.by_id.call(null, "email");
+    var password = domina.by_id.call(null, "password");
+    domina.events.listen_BANG_.call(null, domina.by_id.call(null, "submit"), new cljs.core.Keyword(null, "click", "click", 1108654330), modern_cljs.login.validate_dbg);
+    domina.events.listen_BANG_.call(null, email, new cljs.core.Keyword(null, "blur", "blur", 1016931289), function(e) {
+      return modern_cljs.login.validate_email.call(null, email)
+    });
+    return domina.events.listen_BANG_.call(null, password, new cljs.core.Keyword(null, "blur", "blur", 1016931289), function(e) {
+      return modern_cljs.login.validate_password.call(null, password)
+    })
   }else {
     return null
   }
 };
+goog.exportSymbol("modern_cljs.login.init", modern_cljs.login.init);
 goog.provide("goog.net.xpc.FrameElementMethodTransport");
 goog.require("goog.net.xpc");
 goog.require("goog.net.xpc.CrossPageChannelRole");
