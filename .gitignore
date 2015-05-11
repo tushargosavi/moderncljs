@@ -13,3 +13,6 @@ pom.xml.asc
 modern_cljs.iml
 /out
 /repl
+resources/public/js/modern.js
+resources/public/js/modern_prod.js
+
