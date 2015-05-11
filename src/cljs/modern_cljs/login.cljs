@@ -34,18 +34,18 @@
 (defn validate-email [email]
   (.log js/console "calling validate email")
   (dom/destroy! (dom/by-class "email"))
-  (if (not (re-matches *email-re* (dom/value email)))
+  (if (not (re-matches (re-pattern (dom/attr email :pattern))  (dom/value email)))
     (do
-      (dom/prepend! (dom/by-id "loginForm") (html [:div.help.email "Wrong email"]))
+      (dom/prepend! (dom/by-id "loginForm") (html [:div.help.email (dom/attr email :title)]))
       false)
     true))
 
-(defn validate-password [passwd]
+(defn validate-password [password]
   (.log js/console "calling validate password")
   (dom/destroy! (dom/by-class "password"))
-  (if (not (re-matches *password-re* (dom/value passwd)))
+  (if (not (re-matches (re-pattern (dom/attr password :pattern)) (dom/value password)))
     (do
-      (dom/prepend! (dom/by-id "loginForm") (html [:div.help.password "Wrong password"]))
+      (dom/prepend! (dom/by-id "loginForm") (html [:div.help.password (dom/attr password :title)]))
       false)
     true))
 
