@@ -1,59 +1,50 @@
 (ns modern-cljs.login
   (:require-macros [hiccups.core :refer [html]])
-  (:require [domina :as dom]
+  (:require [domina :refer [value attr by-id by-class destroy! append! prepend!]]
             [domina.events :as ev]
-            [hiccups.runtime]))
-
-
-(def ^:dynamic *password-re* #"^(?=.*\d).{4,8}$")
-
-(def ^:dynamic *email-re* #"^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$")
+            [hiccups.runtime]
+            [modern-cljs.login.validators :refer [user-credential-errors]]))
 
 (defn get-value [name]
-  (dom/value (dom/by-id name)))
+  (value (by-id name)))
 
-(defn validate-form [e]
-  (let [email (dom/by-id "email")
-        password (dom/by-id "password")
-        email-val (dom/value email)
-        password-val (dom/value password)]
-    (if (or (empty? email-val) (empty? password-val))
+(defn validate-form [e email password]
+  (if-let [{e-errs :email p-errs :password} (user-credential-errors (value email) (value password))]
+    (if (or e-err p-err)
       (do
-        (dom/destroy! (dom/by-class "help"))
+        (destroy! (by-class "help"))
         (ev/prevent-default e)
-        (dom/append! (dom/by-id "loginForm") (html [:div.help "Please complete the form"])))
-      (if (and (validate-email email) (validate-password password))
-        true
-        (ev/prevent-default e)))))
+        (append! (by-id "loginForm") (html [:div.help "Please complete form"])))
+      (ev/prevent-default e))
+    true))
 
-(defn validate-dbg [e]
+(defn validate-dbg [e email password]
   (do
     (.log js/console "validate function called")
-    (validate-form e)))
+    (validate-form e email password)))
 
 (defn validate-email [email]
-  (.log js/console "calling validate email")
-  (dom/destroy! (dom/by-class "email"))
-  (if (not (re-matches (re-pattern (dom/attr email :pattern))  (dom/value email)))
+  (destroy! (by-class "email"))
+  (if-let [errors (:email (user-credential-errors (value email) nil))]
     (do
-      (dom/prepend! (dom/by-id "loginForm") (html [:div.help.email (dom/attr email :title)]))
+      (prepend! (by-id "loginForm") (html [:div.help.email (first errors)]))
       false)
     true))
 
 (defn validate-password [password]
-  (.log js/console "calling validate password")
-  (dom/destroy! (dom/by-class "password"))
-  (if (not (re-matches (re-pattern (dom/attr password :pattern)) (dom/value password)))
+  (destroy! (by-class "password"))
+  (if-let [errors (:password (user-credential-errors nil (value password)))]
     (do
-      (dom/prepend! (dom/by-id "loginForm") (html [:div.help.password (dom/attr password :title)]))
+      (append! (by-id "loginForm") (html [:div.help.password (first errors)]))
       false)
     true))
+
 
 (defn ^:export init []
   (if (and js/document
            (aget js/document "getElementById"))
-    (let [email (dom/by-id "email")
-          password (dom/by-id "password")]
-      (ev/listen! (dom/by-id "submit") :click validate-dbg)
+    (let [email (by-id "email")
+          password (by-id "password")]
+      (ev/listen! (by-id "submit") :click (fn [e] validate-dbg e email password))
       (ev/listen! email :blur (fn [e] (validate-email email)))
       (ev/listen! password :blur (fn [e] (validate-password password))))))
